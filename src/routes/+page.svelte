@@ -139,7 +139,7 @@
 </svelte:head>
 
 <main>
-	<h1>Nummerjakten</h1>
+	<img src="/nummerjakten.png" alt="Nummerjakten" class="logo" />
 
 	<section class="card centered">
 		<h2>Logga ett nummer</h2>
@@ -192,9 +192,11 @@
 		margin: 0 auto;
 	}
 
-	h1 {
-		text-align: center;
-		margin-bottom: 1.5rem;
+	.logo {
+		display: block;
+		max-width: 100%;
+		height: auto;
+		margin: 0 auto 1.5rem;
 	}
 
 	.card {
