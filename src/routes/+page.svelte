@@ -79,11 +79,11 @@
 	async function handleSave() {
 		const num = parseInt(inputValue, 10);
 		if (isNaN(num) || num < 0 || num > 999) {
-			status = 'Enter a valid number (000\u2013999)';
+		status = 'Ange ett giltigt nummer (000\u2013999)';
 			return;
 		}
 
-		status = 'Getting location\u2026';
+		status = 'Hämtar plats\u2026';
 
 		try {
 			const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -105,7 +105,7 @@
 
 			if (!res.ok) throw new Error('Server error');
 
-			status = `Saved ${String(num).padStart(3, '0')} at ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+			status = `Sparade ${String(num).padStart(3, '0')} vid ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
 			inputValue = '';
 
 			if (num === nextNumber) {
@@ -113,13 +113,13 @@
 			}
 	} catch (err: any) {
 			if (err?.code === 1) {
-				status = 'Location permission denied. On iOS: Settings → Privacy → Location Services → Safari → Allow.';
+				status = 'Plats\u00e5tkomst nekad. P\u00e5 iOS: Inst\u00e4llningar \u2192 Integritet \u2192 Platstj\u00e4nster \u2192 Safari \u2192 Till\u00e5t.';
 			} else if (err?.code === 2) {
-				status = 'Location unavailable. Make sure Location Services is enabled in Settings.';
+				status = 'Plats ej tillg\u00e4nglig. Kontrollera att Platstj\u00e4nster \u00e4r aktiverade i Inst\u00e4llningar.';
 			} else if (err?.code === 3) {
-				status = 'Location request timed out. Try again.';
+				status = 'Platsbeg\u00e4ran tog f\u00f6r l\u00e5ng tid. F\u00f6rs\u00f6k igen.';
 			} else {
-				status = `Error: ${err?.message ?? 'unknown'}`;
+				status = `Fel: ${err?.message ?? 'ok\u00e4nt'}`;
 			}
 		}
 	}
@@ -135,14 +135,14 @@
 		href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 		crossorigin=""
 	/>
-	<title>Number Tracker</title>
+	<title>Nummerjakten</title>
 </svelte:head>
 
 <main>
-	<h1>Number Tracker</h1>
+	<h1>Nummerjakten</h1>
 
 	<section class="card">
-		<h2>Log a Number</h2>
+		<h2>Logga ett nummer</h2>
 		<div class="row">
 			<input
 				type="text"
@@ -152,7 +152,7 @@
 				placeholder="000"
 				bind:value={inputValue}
 			/>
-			<button onclick={handleSave}>Save</button>
+			<button onclick={handleSave}>Spara</button>
 		</div>
 		{#if status}
 			<p class="status">{status}</p>
@@ -160,18 +160,18 @@
 	</section>
 
 	<section class="card">
-		<h2>Next</h2>
+		<h2>Nästa</h2>
 		<div class="row">
 			<button class="undo" onclick={handleUndo}>←</button>
 			<span class="big-number">{pad3(nextNumber)}</span>
-			<button onclick={handleFoundIt}>Found it!</button>
+			<button onclick={handleFoundIt}>Hittad!</button>
 		</div>
 	</section>
 
 	<section class="card">
-		<h2>Locations for {pad3(nextNumber)}</h2>
+		<h2>Du har sett {pad3(nextNumber)} på följande platser</h2>
 		{#if locations.length === 0}
-			<p>No locations found for this number.</p>
+			<p>Inga platser hittade för detta nummer.</p>
 		{/if}
 		<div class="map" bind:this={mapContainer}></div>
 	</section>
