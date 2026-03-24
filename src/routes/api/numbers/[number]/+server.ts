@@ -1,8 +1,9 @@
 import { json, error } from '@sveltejs/kit';
-import { sql } from '$lib/server/db';
+import { sql as getDb } from '$lib/server/db';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ params }) => {
+	const sql = getDb();
 	const num = parseInt(params.number, 10);
 
 	if (isNaN(num) || num < 0 || num > 999) {

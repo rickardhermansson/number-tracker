@@ -1,9 +1,18 @@
-import { neon } from '@neondatabase/serverless';
-import { DATABASE_URL } from '$env/static/private';
+import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
+import { env } from '$env/dynamic/private';
 
-const sql = neon(DATABASE_URL);
+let sql: NeonQueryFunction<false, false>;
+
+function getDb() {
+	if (!sql) {
+		if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
+		sql = neon(env.DATABASE_URL);
+	}
+	return sql;
+}
 
 export async function initDb() {
+	const sql = getDb();
 	await sql`
 		CREATE TABLE IF NOT EXISTS number_locations (
 			id SERIAL PRIMARY KEY,
@@ -26,4 +35,4 @@ export async function initDb() {
 	`;
 }
 
-export { sql };
+export { getDb as sql };

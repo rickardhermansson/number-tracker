@@ -1,8 +1,9 @@
 import { json } from '@sveltejs/kit';
-import { sql } from '$lib/server/db';
+import { sql as getDb } from '$lib/server/db';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
+	const sql = getDb();
 	const rows = await sql`
 		SELECT value FROM app_state WHERE key = 'next_number'
 	`;
@@ -11,6 +12,7 @@ export const GET: RequestHandler = async () => {
 };
 
 export const POST: RequestHandler = async () => {
+	const sql = getDb();
 	const rows = await sql`
 		UPDATE app_state
 		SET value = ((CAST(value AS INTEGER) + 1) % 1000)::TEXT
