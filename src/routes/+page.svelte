@@ -104,10 +104,16 @@
 			if (num === nextNumber) {
 				await fetchLocations(nextNumber);
 			}
-		} catch (err: any) {
-			status = err?.message === 'User denied Geolocation'
-				? 'Location permission denied'
-				: `Error: ${err?.message ?? 'unknown'}`;
+	} catch (err: any) {
+			if (err?.code === 1) {
+				status = 'Location permission denied. On iOS: Settings → Privacy → Location Services → Safari → Allow.';
+			} else if (err?.code === 2) {
+				status = 'Location unavailable. Make sure Location Services is enabled in Settings.';
+			} else if (err?.code === 3) {
+				status = 'Location request timed out. Try again.';
+			} else {
+				status = `Error: ${err?.message ?? 'unknown'}`;
+			}
 		}
 	}
 
