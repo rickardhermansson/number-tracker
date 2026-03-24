@@ -5,8 +5,9 @@ let sql: NeonQueryFunction<false, false>;
 
 function getDb() {
 	if (!sql) {
-		if (!env.DATABASE_URL) throw new Error('DATABASE_URL is not set');
-		sql = neon(env.DATABASE_URL);
+		const url = env.DATABASE_URL || env.POSTGRES_URL;
+		if (!url) throw new Error('DATABASE_URL or POSTGRES_URL must be set');
+		sql = neon(url);
 	}
 	return sql;
 }
