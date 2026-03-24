@@ -22,3 +22,15 @@ export const POST: RequestHandler = async () => {
 	const next = parseInt(rows[0].value, 10);
 	return json({ next });
 };
+
+export const PATCH: RequestHandler = async () => {
+	const sql = getDb();
+	const rows = await sql`
+		UPDATE app_state
+		SET value = ((CAST(value AS INTEGER) + 999) % 1000)::TEXT
+		WHERE key = 'next_number'
+		RETURNING value
+	`;
+	const next = parseInt(rows[0].value, 10);
+	return json({ next });
+};

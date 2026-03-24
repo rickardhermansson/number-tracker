@@ -69,6 +69,13 @@
 		await fetchLocations(nextNumber);
 	}
 
+	async function handleUndo() {
+		const res = await fetch('/api/next', { method: 'PATCH' });
+		const data = await res.json();
+		nextNumber = data.next;
+		await fetchLocations(nextNumber);
+	}
+
 	async function handleSave() {
 		const num = parseInt(inputValue, 10);
 		if (isNaN(num) || num < 0 || num > 999) {
@@ -155,6 +162,7 @@
 	<section class="card">
 		<h2>Next</h2>
 		<div class="row">
+			<button class="undo" onclick={handleUndo}>←</button>
 			<span class="big-number">{pad3(nextNumber)}</span>
 			<button onclick={handleFoundIt}>Found it!</button>
 		</div>
@@ -229,6 +237,16 @@
 
 	button:active {
 		background: #3730a3;
+	}
+
+	.undo {
+		background: #9ca3af;
+		padding: 0.5rem 0.75rem;
+		font-size: 1.2rem;
+	}
+
+	.undo:active {
+		background: #6b7280;
 	}
 
 	.big-number {
