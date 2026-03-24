@@ -141,9 +141,9 @@
 <main>
 	<h1>Nummerjakten</h1>
 
-	<section class="card">
+	<section class="card centered">
 		<h2>Logga ett nummer</h2>
-		<div class="row">
+		<div class="row centered">
 			<input
 				type="text"
 				inputmode="numeric"
@@ -159,13 +159,14 @@
 		{/if}
 	</section>
 
-	<section class="card">
+	<section class="card centered">
 		<h2>Nästa</h2>
-		<div class="row">
-			<button class="undo" onclick={handleUndo}>←</button>
+		<div class="row centered">
+			<button class="stepper" onclick={handleUndo}>−</button>
 			<span class="big-number">{pad3(nextNumber)}</span>
-			<button onclick={handleFoundIt}>Hittad!</button>
+			<button class="stepper" onclick={handleFoundIt}>+</button>
 		</div>
+		<button class="found-btn" onclick={handleFoundIt}>Hittad!</button>
 	</section>
 
 	<section class="card">
@@ -204,6 +205,10 @@
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
 
+	.centered {
+		text-align: center;
+	}
+
 	.card h2 {
 		margin: 0 0 0.75rem;
 		font-size: 1.1rem;
@@ -213,6 +218,10 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
+	}
+
+	.row.centered {
+		justify-content: center;
 	}
 
 	input {
@@ -239,14 +248,28 @@
 		background: #3730a3;
 	}
 
-	.undo {
+	.stepper {
 		background: #9ca3af;
-		padding: 0.5rem 0.75rem;
-		font-size: 1.2rem;
+		padding: 0.5rem 1rem;
+		font-size: 1.5rem;
+		line-height: 1;
+		border-radius: 50%;
+		width: 3rem;
+		height: 3rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
-	.undo:active {
+	.stepper:active {
 		background: #6b7280;
+	}
+
+	.found-btn {
+		margin-top: 1rem;
+		width: 100%;
+		padding: 0.75rem;
+		font-size: 1.1rem;
 	}
 
 	.big-number {
