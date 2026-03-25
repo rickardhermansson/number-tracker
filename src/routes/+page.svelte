@@ -6,6 +6,8 @@
 	let inputValue = $state('');
 	let status = $state('');
 	let locations = $state<{ latitude: number; longitude: number; created_at: string }[]>([]);
+	let allEntries = $state<{ id: number; number: number; latitude: number; longitude: number; created_at: string }[]>([]);
+	let showManage = $state(false);
 	let mapContainer: HTMLDivElement;
 	let map: L.Map | undefined;
 	let markersLayer: L.LayerGroup | undefined;
@@ -124,6 +126,31 @@
 		}
 	}
 
+	async function toggleManage() {
+		showManage = !showManage;
+		if (showManage) {
+			await fetchAllEntries();
+		}
+	}
+
+	async function fetchAllEntries() {
+		const res = await fetch('/api/numbers');
+		const data = await res.json();
+		allEntries = data.entries;
+	}
+
+	async function handleDelete(id: number) {
+		const res = await fetch('/api/numbers', {
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id })
+		});
+		if (res.ok) {
+			allEntries = allEntries.filter(e => e.id !== id);
+			await fetchLocations(nextNumber);
+		}
+	}
+
 	function pad3(n: number): string {
 		return String(n).padStart(3, '0');
 	}
@@ -176,6 +203,30 @@
 		{/if}
 		<div class="map" bind:this={mapContainer}></div>
 	</section>
+
+	<button class="toggle-manage" onclick={toggleManage}>
+		Visa sparade nummer {showManage ? '▴' : '▾'}
+	</button>
+
+	{#if showManage}
+		<section class="card manage">
+			{#if allEntries.length === 0}
+				<p>Inga sparade nummer.</p>
+			{:else}
+				<ul class="entry-list">
+					{#each allEntries as entry (entry.id)}
+						<li>
+							<div class="entry-info">
+								<strong>{pad3(entry.number)}</strong>
+								<span class="entry-coords">{entry.latitude.toFixed(5)}, {entry.longitude.toFixed(5)}</span>
+							</div>
+							<button class="delete-btn" onclick={() => handleDelete(entry.id)}>✕</button>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+		</section>
+	{/if}
 </main>
 
 <style>
@@ -288,5 +339,74 @@
 		height: 300px;
 		border-radius: 8px;
 		overflow: hidden;
+	}
+
+	.toggle-manage {
+		width: 100%;
+		background: transparent;
+		color: #666;
+		font-size: 0.9rem;
+		padding: 0.75rem;
+		margin-bottom: 0.5rem;
+		border: 1px dashed #ccc;
+		border-radius: 8px;
+	}
+
+	.toggle-manage:active {
+		background: #eee;
+	}
+
+	.manage {
+		max-height: 400px;
+		overflow-y: auto;
+	}
+
+	.entry-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.entry-list li {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.6rem 0;
+		border-bottom: 1px solid #eee;
+	}
+
+	.entry-list li:last-child {
+		border-bottom: none;
+	}
+
+	.entry-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+
+	.entry-info strong {
+		font-family: monospace;
+		font-size: 1.1rem;
+	}
+
+	.entry-coords {
+		font-size: 0.8rem;
+		color: #888;
+	}
+
+	.delete-btn {
+		background: #ef4444;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		padding: 0.35rem 0.6rem;
+		font-size: 0.85rem;
+		cursor: pointer;
+		flex-shrink: 0;
+	}
+
+	.delete-btn:active {
+		background: #dc2626;
 	}
 </style>
