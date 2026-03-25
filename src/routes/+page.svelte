@@ -234,7 +234,7 @@
 		font-family: system-ui, -apple-system, sans-serif;
 		margin: 0;
 		padding: 1rem;
-		background: #f5f5f5;
+		background: #dc2626;
 		color: #333;
 	}
 
